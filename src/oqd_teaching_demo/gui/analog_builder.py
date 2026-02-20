@@ -28,7 +28,6 @@ from oqd_teaching_demo.analog_compiler import compile_to_program
 from oqd_teaching_demo.gui.programs import (
     preset_rabi_flopping,
     preset_ising,
-    preset_all_to_all,
 )
 
 
@@ -241,8 +240,8 @@ def analog_builder_card(board, stream_ip: str):
     def show_ir_json():
         nonlocal json_output
         try:
-            ir = build_analog_circuit(spec)
-            text = json.dumps(ir, indent=2)
+            circuit = build_analog_circuit(spec)
+            text = json.dumps(circuit.model_dump(serialize_as_any=True), indent=2)
             if json_output is not None:
                 json_output.set_content(text)
             ui.notify("IR JSON generated", type="positive")
@@ -282,7 +281,6 @@ def analog_builder_card(board, stream_ip: str):
             ui.label("Presets:").classes("text-sm font-bold")
             ui.button("Rabi Flopping", on_click=lambda: load_preset(preset_rabi_flopping)).props("flat")
             ui.button("Ising Model", on_click=lambda: load_preset(preset_ising)).props("flat")
-            ui.button("All-to-All", on_click=lambda: load_preset(preset_all_to_all)).props("flat")
 
         ui.separator()
 

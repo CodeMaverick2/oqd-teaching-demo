@@ -155,23 +155,3 @@ def preset_ising() -> AnalogProgramSpec:
         n_ions=4,
         steps=[EvolveStep(terms=terms, duration=3.0)],
     )
-
-
-def preset_all_to_all() -> AnalogProgramSpec:
-    terms = []
-    for i in range(4):
-        terms.append(
-            HamiltonianTerm(
-                pauli="X",
-                ion=i,
-                coefficient=0.5,
-                envelope=AmplitudeEnvelope(
-                    kind="sinusoidal", frequency=0.5, phase=0.0
-                ),
-            )
-        )
-
-    return AnalogProgramSpec(
-        n_ions=4,
-        steps=[EvolveStep(terms=terms, duration=6.0)],
-    )
