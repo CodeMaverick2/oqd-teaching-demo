@@ -6,6 +6,7 @@ import logging
 
 from oqd_teaching_demo.program import Program
 from oqd_teaching_demo.gui.programs import digital_shor, digital_random, analog_ising, analog_all_to_all
+from oqd_teaching_demo.gui.circuit_builder import circuit_builder_card
 
 # For development & testing (i.e., unitaryDESIGN participants!), set this MOCK = True
 MOCK = True
@@ -126,12 +127,14 @@ def main():
     control_dialog = control_card(board)
     digital_dialog = digital_card(board)
     analog_dialog = analog_card(board)
+    circuit_dialog = circuit_builder_card(board, stream_ip)
 
     with ui.column():
         with ui.row().classes('fixed-center'):
             ui.button('Control Panel', on_click=control_dialog.open)
             ui.button('Digital Interface', on_click=digital_dialog.open)
             ui.button('Analog Interface', on_click=analog_dialog.open)
+            ui.button('Quantum Playground', on_click=circuit_dialog.open).props('color=purple')
 
         ui.image("https://github.com/OpenQuantumDesign/equilux/blob/9ed0c5380133e7d135121c44c3f4cdbcb8cf781b/docs/img/oqd-logo.png?raw=true").classes("w-32 h-32")
 
