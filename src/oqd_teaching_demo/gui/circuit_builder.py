@@ -214,12 +214,20 @@ def circuit_builder_card(board, stream_ip: str):
             if ctrl == qubit:
                 ui.notify("Control and target must be different qubits", type="negative")
                 return
+            if state["grid"][ctrl][col] is not None:
+                ui.notify(f"Q{ctrl} at t{col} is already occupied", type="negative")
+                return
             state["grid"][qubit][col] = {
                 "type": "cnot_target",
                 "gate": "CNOT",
                 "control": ctrl,
             }
-            ui.notify(f"Placed CNOT (control=Q{ctrl}) on Q{qubit}, t{col}", type="positive")
+            state["grid"][ctrl][col] = {
+                "type": "cnot_control",
+                "gate": "CNOT",
+                "target": qubit,
+            }
+            ui.notify(f"Placed CNOT (Q{ctrl} → Q{qubit}), t{col}", type="positive")
         else:
             state["grid"][qubit][col] = {"type": "unary", "gate": gate}
             ui.notify(f"Placed {gate} gate on Q{qubit}, t{col}", type="positive")
@@ -230,9 +238,14 @@ def circuit_builder_card(board, stream_ip: str):
             ui.notify("Click a cell in the grid first to select it", type="warning")
             return
         qubit, col = state["selected_cell"]
-        if state["grid"][qubit][col] is None:
+        cell = state["grid"][qubit][col]
+        if cell is None:
             ui.notify("Cell is already empty", type="info")
             return
+        if cell["type"] == "cnot_target":
+            state["grid"][cell["control"]][col] = None
+        elif cell["type"] == "cnot_control":
+            state["grid"][cell["target"]][col] = None
         state["grid"][qubit][col] = None
         rebuild_grid()
 
@@ -316,10 +329,21 @@ def circuit_builder_card(board, stream_ip: str):
             if is_selected:
                 btn.style(add="border: 3px solid #000;")
             btn.classes("w-16 h-10 text-sm font-bold")
+        elif cell["type"] == "cnot_control":
+            tgt = cell["target"]
+            btn = ui.button(
+                f"●→{tgt}",
+                on_click=lambda q=qubit, c=col: on_cell_click(q, c),
+            )
+            btn.props("dense unelevated")
+            btn.style(f"background-color: {GATE_COLORS['CNOT']}; color: white;")
+            if is_selected:
+                btn.style(add="border: 3px solid #000;")
+            btn.classes("w-16 h-10 text-sm font-bold")
         elif cell["type"] == "cnot_target":
             ctrl = cell["control"]
             btn = ui.button(
-                f"CX{ctrl}",
+                f"⊕←{ctrl}",
                 on_click=lambda q=qubit, c=col: on_cell_click(q, c),
             )
             btn.props("dense unelevated")
@@ -524,6 +548,11 @@ def circuit_builder_card(board, stream_ip: str):
                         "type": "cnot_target",
                         "gate": "CNOT",
                         "control": instr.control,
+                    }
+                    state["grid"][instr.control][col] = {
+                        "type": "cnot_control",
+                        "gate": "CNOT",
+                        "target": instr.target,
                     }
                     col += 1
             rebuild_grid()
