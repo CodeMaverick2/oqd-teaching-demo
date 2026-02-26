@@ -325,7 +325,7 @@ def circuit_builder_card(board, stream_ip: str):
                 on_click=lambda q=qubit, c=col: on_cell_click(q, c),
             )
             btn.props("dense unelevated")
-            btn.style(f"background-color: {color}; color: white;")
+            btn.style(f"background-color: {color} !important; color: white !important;")
             if is_selected:
                 btn.style(add="border: 3px solid #000;")
             btn.classes("w-16 h-10 text-sm font-bold")
@@ -336,7 +336,7 @@ def circuit_builder_card(board, stream_ip: str):
                 on_click=lambda q=qubit, c=col: on_cell_click(q, c),
             )
             btn.props("dense unelevated")
-            btn.style(f"background-color: {GATE_COLORS['CNOT']}; color: white;")
+            btn.style(f"background-color: {GATE_COLORS['CNOT']} !important; color: white !important;")
             if is_selected:
                 btn.style(add="border: 3px solid #000;")
             btn.classes("w-16 h-10 text-sm font-bold")
@@ -347,7 +347,7 @@ def circuit_builder_card(board, stream_ip: str):
                 on_click=lambda q=qubit, c=col: on_cell_click(q, c),
             )
             btn.props("dense unelevated")
-            btn.style(f"background-color: {GATE_COLORS['CNOT']}; color: white;")
+            btn.style(f"background-color: {GATE_COLORS['CNOT']} !important; color: white !important;")
             if is_selected:
                 btn.style(add="border: 3px solid #000;")
             btn.classes("w-16 h-10 text-sm font-bold")
@@ -662,7 +662,7 @@ def circuit_builder_card(board, stream_ip: str):
 
                         btn = ui.button(gate_name, on_click=_select_gate)
                         btn.style(
-                            f"background-color: {GATE_COLORS[gate_name]}; color: white;"
+                            f"background-color: {GATE_COLORS[gate_name]} !important; color: white !important;"
                         )
                         btn.props("dense").classes("w-14")
 
