@@ -16,6 +16,7 @@
 import numpy as np
 
 from oqd_teaching_demo.program import Program
+from oqd_teaching_demo.analog import AnalogProgramSpec, EvolveStep, HamiltonianTerm, AmplitudeEnvelope
 
 
 def digital_simple():
@@ -96,3 +97,61 @@ def analog_all_to_all(n: int = 60):
     )
     program = Program(red_lasers_intensity=red_lasers_intensity, dt=dt)
     return program
+
+
+def preset_rabi_flopping() -> AnalogProgramSpec:
+    return AnalogProgramSpec(
+        n_ions=4,
+        steps=[
+            EvolveStep(
+                terms=[
+                    HamiltonianTerm(
+                        pauli="X",
+                        ion=0,
+                        coefficient=1.0,
+                        envelope=AmplitudeEnvelope(kind="constant", value=1.0),
+                    ),
+                ],
+                duration=2.0,
+            ),
+        ],
+    )
+
+
+def preset_ising() -> AnalogProgramSpec:
+    terms = []
+    for i in range(3):
+        terms.append(
+            HamiltonianTerm(
+                pauli="X",
+                ion=i,
+                coefficient=0.5,
+                envelope=AmplitudeEnvelope(
+                    kind="sinusoidal", frequency=1.0, phase=0.0
+                ),
+            )
+        )
+        terms.append(
+            HamiltonianTerm(
+                pauli="X",
+                ion=i + 1,
+                coefficient=0.5,
+                envelope=AmplitudeEnvelope(
+                    kind="sinusoidal", frequency=1.0, phase=0.0
+                ),
+            )
+        )
+    for i in range(4):
+        terms.append(
+            HamiltonianTerm(
+                pauli="Z",
+                ion=i,
+                coefficient=0.3,
+                envelope=AmplitudeEnvelope(kind="constant", value=1.0),
+            )
+        )
+
+    return AnalogProgramSpec(
+        n_ions=4,
+        steps=[EvolveStep(terms=terms, duration=3.0)],
+    )
