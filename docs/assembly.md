@@ -34,10 +34,11 @@
         source .venv/bin/activate
 
         # start the camera stream and detach
-        python src/gui/camera_stream.py &
+        python src/oqd_teaching_demo/gui/camera_stream.py &
 
-        # start the main interface server
-        python src/gui/main.py &
+        # start the main interface server (drives real hardware by default;
+        # set OQD_MOCK=1 to run against MockDevice instead, e.g. off-hardware)
+        python src/oqd_teaching_demo/gui/main.py &
         ```
 
    8. Launch a browser in kiosk mode

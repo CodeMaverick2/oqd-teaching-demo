@@ -1,14 +1,16 @@
 from nicegui import ui
 import threading
 import atexit
+import os
 import sys
 import logging
 
 from oqd_teaching_demo.program import Program
 from oqd_teaching_demo.gui.programs import digital_shor, digital_random, analog_ising, analog_all_to_all
 
-# For development & testing (i.e., unitaryDESIGN participants!), set this MOCK = True
-MOCK = True
+# Defaults to real hardware. For development & testing off the physical unit
+# (i.e., unitaryDESIGN participants!), run with OQD_MOCK=1 to use MockDevice instead.
+MOCK = os.environ.get("OQD_MOCK", "0") == "1"
 
 if MOCK:
     from oqd_teaching_demo.control.mock import MockDevice as Device
