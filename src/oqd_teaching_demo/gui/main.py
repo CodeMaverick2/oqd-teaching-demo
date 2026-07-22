@@ -1,15 +1,17 @@
 from nicegui import ui
 import threading
 import atexit
+import os
 import sys
 import logging
 
 from oqd_teaching_demo.program import Program
-from oqd_teaching_demo.gui.programs import digital_shor, digital_random, analog_ising, analog_all_to_all
-from oqd_teaching_demo.gui.circuit_builder import circuit_builder_card
+from oqd_teaching_demo.gui.programs import digital_shor, digital_random
+from oqd_teaching_demo.gui.analog_builder import analog_builder_card
 
-# For development & testing (i.e., unitaryDESIGN participants!), set this MOCK = True
-MOCK = True
+# Defaults to real hardware. For development & testing off the physical unit
+# (i.e., unitaryDESIGN participants!), run with OQD_MOCK=1 to use MockDevice instead.
+MOCK = os.environ.get("OQD_MOCK", "0") == "1"
 
 if MOCK:
     from oqd_teaching_demo.control.mock import MockDevice as Device
@@ -103,31 +105,16 @@ def digital_card(board: Board):
     return digital_dialog
     
 
-def analog_card(board: Board):
-    with ui.dialog() as analog_dialog, ui.card():
-        with ui.row().classes('fixed-center'):
-            with ui.list():
-                ui.button("Nearest Neighbours Ising", on_click=lambda: board.device.run(analog_ising()))
-                ui.button("All-to-All Interactions", on_click=lambda: board.device.run(analog_all_to_all()))
-
-
-            with ui.card().classes('w-full'):
-                ui.image(stream_ip)
-
-    return analog_dialog
-
-
 def main():
 
     board = Board()
     atexit.register(board.cleanup)
 
-    
+
 
     control_dialog = control_card(board)
     digital_dialog = digital_card(board)
-    analog_dialog = analog_card(board)
-    circuit_dialog = circuit_builder_card(board, stream_ip)
+    analog_dialog = analog_builder_card(board, stream_ip)
 
     with ui.column():
         with ui.row().classes('fixed-center'):
